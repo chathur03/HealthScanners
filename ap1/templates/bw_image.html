@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Black and White Image</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+        }
+        .header {
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+        .image-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin-top: 20px;
+        }
+        .image-container img {
+            max-width: 80%;
+            height: auto;
+            border: 5px solid white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">Healthy is better</div>
+    <div class="image-container">
+        <h3>Black and White Image:</h3>
+        <img src="{{ scan.image.url }}" alt="Black and White Image">
+    </div>
+</body>
+</html>
