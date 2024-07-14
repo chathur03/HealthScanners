@@ -1,207 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html>
+<head> 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Scan</title>
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: white;
-            overflow: hidden;
-        }
-        .header {
-            font-size: 32px;
-            margin-bottom: 20px;
-            animation: fadeIn 2s;
-        }
-        .button-container {
-            display: flex;
-            justify-content: space-around;
-            width: 100%;
-            max-width: 800px;
-            margin: 20px;
-        }
-        .button {
-            padding: 10px 20px;
-            font-size: 16px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .button-home {
-            background-color: #28a745;
-            color: white;
-        }
-        .button-home:hover {
-            background-color: #218838;
-        }
-        .button-bw {
-            background-color: #007bff;
-            color: white;
-        }
-        .button-bw:hover {
-            background-color: #0056b3;
-        }
-        .upload-button {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100px;
-            height: 100px;
-            background-color: #007bff;
-            color: white;
-            border-radius: 50%;
-            font-size: 50px;
-            text-align: center;
-            line-height: 100px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            animation: pulse 2s infinite;
-        }
-        .upload-button:hover {
-            background-color: #0056b3;
-        }
-        .hidden-input {
-            display: none;
-        }
-        .image-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            margin-top: 20px;
-            animation: fadeIn 2s;
-        }
-        .image-container img {
-            max-width: 80%;
-            height: auto;
-            border: 5px solid white;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-        .chat-container {
-            width: 80%;
-            max-width: 800px;
-            margin: 20px auto;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            padding: 20px;
-            overflow-y: auto;
-            max-height: 300px;
-        }
-        .chat-input {
-            width: calc(100% - 20px);
-            padding: 10px;
-            margin: 10px;
-            border-radius: 5px;
-            border: none;
-            outline: none;
-            font-size: 16px;
-        }
-        .chat-messages {
-            max-height: 300px;
-            overflow-y: auto;
-            padding-right: 20px;
-        }
-        .message {
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.8);
-            color: #333;
-        }
-        .message.user {
-            background: rgba(0, 123, 255, 0.8);
-            color: white;
-            text-align: right;
-        }
-    </style>
-    <script>
-        async function handleSearch(message) {
-            try {
-                const response = await fetch('/chat/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    },
-                    body: JSON.stringify({ message: message })
-                });
-
-                const data = await response.json();
-                return data.response;
-            } catch (error) {
-                console.log(error);
-                return 'Sorry - Something went wrong. Please try again!';
-            }
-        }
-
-        function sendMessage() {
-            const messageInput = document.getElementById('message-input');
-            const message = messageInput.value;
-            if (message.trim() === '') return;
-
-            displayMessage(message, 'user');
-            messageInput.value = '';
-
-            handleSearch(message).then(responseMessage => {
-                displayMessage(responseMessage, 'bot');
-            });
-        }
-
-        function displayMessage(message, sender) {
-            const chatMessages = document.querySelector('.chat-messages');
-            const messageElement = document.createElement('div');
-            messageElement.classList.add('message', sender);
-            messageElement.textContent = message;
-            chatMessages.appendChild(messageElement);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-    </script>
+    <title>MedScanAI</title>
+    <link rel="stylesheet" href="/static/home.css">
 </head>
 <body>
-    <div class="header">Healthy is better</div>
-    <div class="button-container">
-        <button class="button button-home" onclick="location.href='/'">Home</button>
-        {% if scan %}
-            <button class="button button-bw" onclick="location.href='/bw_image/{{ scan.pk }}/'">BW</button>
-        {% endif %}
-    </div>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <label class="upload-button" for="file-input">+</label>
-        <input id="file-input" class="hidden-input" type="file" name="scan" accept="image/*" onchange="this.form.submit()">
-    </form>
-    {% if scan %}
-        <div class="image-container">
-            <h3>Original Image:</h3>
-            <img src="{{ scan.image.url }}" alt="Original Image">
-        </div>
-    {% endif %}
+    
+    <div class="bg">
+        
+        <div id="h-one">
+            <h1 id="logo">MedScanAI</h1>
 
-    <!-- Chatbot Interface -->
-    <div class="chat-container">
-        <div class="chat-messages"></div>
-        <input type="text" id="message-input" class="chat-input" placeholder="Type a message..." onkeypress="if(event.key === 'Enter') sendMessage()">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <label class="upload-button" for="file-input">+</label>
+                <input id="file-input" class="hidden-input" type="file" name="scan" accept="image/*" onchange="this.form.submit()">
+            </form>
+
+            <p> Upload your Image </p>
+        </div>
+
+        <div id="h-two">
+
+            <h1>Welcome To MedScanAI</h1>
+
+            <p>Scan Your Disease before its too late..</p>
+
+        </div>
     </div>
+
+
 </body>
 </html>

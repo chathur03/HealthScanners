@@ -1,16 +1,18 @@
 import json
 import requests
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from .models import Scan
+from .mlmodels import *
 
 @csrf_exempt
 def home(request):
     if request.method == 'POST' and request.FILES.get('scan'):
         scan = Scan(image=request.FILES['scan'])
         scan.save()
-        return render(request, 'home.html', {'scan': scan})
+
+        return redirect(results, scan_id = scan.id)
     return render(request, 'home.html')
 
 def bw_image(request, pk):
@@ -51,3 +53,9 @@ def chat(request):
         return JsonResponse({'response': generated_text})
 
     return JsonResponse({'response': 'Invalid request method.'}, status=405)
+
+def results(request, scan_id):
+    scan = get_object_or_404(Scan, id=scan_id)
+    y_pred = predict_lungD(scan.image.path)
+    print(y_pred)
+    return render(request, "result_page.html", {"pred" : y_pred})

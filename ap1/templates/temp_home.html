@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedScanAI</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+        body {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: "Roboto", sans-serif;
+            font-weight: 400;
+            font-style: normal;
+            background: linear-gradient(135deg, #b0b8c7 0%, #2a9885 100%);
+            color: white;
+            overflow: hidden;
+            gap: 30%;
+        }
+
+        html, body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+}
+        .mscan{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .header {
+            font-size: 64px;
+            margin-bottom: 20px;
+            animation: fadeIn 2s;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 800px;
+            margin: 20px;
+        }
+        .button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .button-home {
+            background-color: #28a745;
+            color: white;
+        }
+        .button-home:hover {
+            background-color: #218838;
+        }
+        .button-bw {
+            background-color: #007bff;
+            color: white;
+        }
+        .button-bw:hover {
+            background-color: #0056b3;
+        }x
+
+        
+        
+        .chat-container {
+            width: 80%;
+            max-width: 800px;
+            margin: 20px auto;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 300px;
+        }
+        .chat-input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            border: none;
+            outline: none;
+            font-size: 16px;
+        }
+        .chat-messages {
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 20px;
+        }
+        .message {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            color: #333;
+        }
+        .message.user {
+            background: rgba(0, 123, 255, 0.8);
+            color: white;
+            text-align: right;
+        }
+    </style>
+    <script>
+        async function handleSearch(message) {
+            try {
+                const response = await fetch('/chat/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({ message: message })
+                });
+
+                const data = await response.json();
+                return data.response;
+            } catch (error) {
+                console.log(error);
+                return 'Sorry - Something went wrong. Please try again!';
+            }
+        }
+
+        function sendMessage() {
+            const messageInput = document.getElementById('message-input');
+            const message = messageInput.value;
+            if (message.trim() === '') return;
+
+            displayMessage(message, 'user');
+            messageInput.value = '';
+
+            handleSearch(message).then(responseMessage => {
+                displayMessage(responseMessage, 'bot');
+            });
+        }
+
+        function displayMessage(message, sender) {
+            const chatMessages = document.querySelector('.chat-messages');
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', sender);
+            messageElement.textContent = message;
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+    </script>
+</head>
+<body class="background">
+    <div class="mscan">
+        <div class="header">MedScanAI</div>
+        <div class="button-container">
+            {% if scan %}
+                <button class="button button-bw" onclick="location.href='/bw_image/{{ scan.pk }}/'">BW</button>
+            {% endif %}
+        </div>
+        
+    </div>
+    <div>
+        <img src="/static/medical_bot.png" width="600" height="600">
+    </div>
+
+    {% if scan %}
+        <div class="image-container">
+            <h3>Original Image:</h3>
+            <img src="{{ scan.image.url }}" alt="Original Image">
+        </div>
+    {% endif %}
+
+    <!-- Chatbot Interface -->
+    <!-- <div class="chat-container">
+        <div class="chat-messages"></div>
+        <input type="text" id="message-input" class="chat-input" placeholder="Type a message..." onkeypress="if(event.key === 'Enter') sendMessage()">
+    </div> -->
+
+</body>
+</html>

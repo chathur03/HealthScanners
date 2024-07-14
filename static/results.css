@@ -1,0 +1,55 @@
+body {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    
+    font-family: "Roboto", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    
+    background: #131313;
+
+    /* color: white; */
+    overflow: hidden;
+    gap: 30%;
+}
+
+#result-div{
+    width: 1033px;
+    height: 100%;
+
+    margin: 0px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+
+#gemini-div{
+    width: 583px;
+    height: 100%;
+
+    background: rgba(255, 255, 255, 0.07);
+}
+
+#res-img{
+    width: 462px;
+    height: 336px;
+    flex-shrink: 0;
+    border-radius: 34px;
+    background: rgba(40, 38, 38, 0.69);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#res-desc h1{
+    color: white;
+}
