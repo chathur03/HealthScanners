@@ -24,6 +24,41 @@ def bw_image(request, pk):
     bw.save(scan.image.path)
     return render(request, 'bw_image.html', {'scan': scan})
 
+# @csrf_exempt
+# def chat(request):
+#     if request.method == 'POST':
+#         data = json.loads(request.body)
+#         message = data.get('message', '')
+
+#         api_key = "AIzaSyAyr7vovEdSIPLK43soiSvtHzDAC-mG-UY"
+#         url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={api_key}"
+#         headers = {
+#             'Content-Type': 'application/json',
+#         }
+#         payload = json.dumps({
+#             "contents": [{
+#                 "parts": [{
+#                     "text": message
+#                 }]
+#             }]
+#         })
+#         response = requests.post(url, headers=headers, data=payload)
+#         response_data = response.json()
+
+#         if response.status_code == 200:
+#             generated_text = response_data.get('candidates', [{}])[0].get('content', {}).get('parts', [{}])[0].get('text', 'Sorry, I did not understand that.')
+#         else:
+#             generated_text = 'Sorry, something went wrong. Please try again.'
+
+#         return JsonResponse({'response': generated_text})
+
+#     return JsonResponse({'response': 'Invalid request method.'}, status=405)
+
+import json
+import requests
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
 @csrf_exempt
 def chat(request):
     if request.method == 'POST':
@@ -54,8 +89,24 @@ def chat(request):
 
     return JsonResponse({'response': 'Invalid request method.'}, status=405)
 
+
 def results(request, scan_id):
     scan = get_object_or_404(Scan, id=scan_id)
-    y_pred = predict_lungD(scan.image.path)
-    print(y_pred)
-    return render(request, "result_page.html", {"pred" : y_pred})
+    clas = general_predict(scan.image.path)
+    clas_str = str(clas).strip().upper()
+    print(clas_str)
+
+    if clas_str == "SKIN":
+        y_pred = predict_skinD(scan.image.path)
+        return render(request, "result_page.html", {"pred" : y_pred})
+    elif clas_str == "LUNGS":
+        y_pred = predict_lungD(scan.image.path)
+        return render(request, "result_page.html", {"pred" : y_pred})
+    elif clas_str == "BONES":
+        y_pred = predict_bone(scan.image.path)
+        return render(request, "result_page.html", {"pred" : y_pred})
+    elif clas_str == "BRAIN":
+        y_pred = predict_brain(scan.image.path)
+        return render(request, "result_page.html", {"pred" : y_pred})
+
+    

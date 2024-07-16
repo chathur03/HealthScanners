@@ -9,7 +9,7 @@
 <body>
     <div id="result-div">
         <div id="res-img"> 
-            <img src="/static/pred/predicted.png" height="auto" width="300px">
+            <img src="/static/pred/predicted.png" height="300px" width="auto">
         </div>
         <div id="res-desc">
             <h1>Results Detected: {{ pred }}</h1>
@@ -18,8 +18,116 @@
     </div>
 
     <div id="gemini-div">
-
-
+        <div class="chatbot-container">
+            <div id="header">
+                <h1>Report with AI</h1>
+            </div>
+            <div id="chatbot">
+                <div id="conversation">
+                  <div class="chatbot-message">
+                    <p class="chatbot-text">Feel Free to Ask any Questions...</p>
+                  </div>
+                </div>
+                <form id="input-form">
+                  <message-container>
+                    <input id="input-field" type="text" placeholder="Type your message here">
+                    <button id="submit-button" type="submit">
+                      <img class="send-icon" src="send-message.png" alt="">
+                    </button>
+                  </message-container>
+                    
+                </form>
+            </div>  
+    
+        </div>
     </div>
 </body>
+<script>
+
+const chatbot = document.getElementById("chatbot");
+const conversation = document.getElementById("conversation");
+const inputForm = document.getElementById("input-form");
+const inputField = document.getElementById("input-field");
+
+// window.onload = async(event) => {
+//     const input = inputField.value;
+
+//     inputField.value = "";
+//     const currentTime = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+//     let message = document.createElement("div");
+//     message.classList.add("chatbot-message", "user-message");
+//     message.innerHTML = `<p class="chatbot-text" sentTime="${currentTime}">${input}</p>`;
+//     conversation.appendChild(message);
+
+//     let a = '{{ pred }}'
+    
+//     if(a == '.'){
+//         a == "fractures"
+//     }
+
+//     if(["SKIN","BRAIN","Lungs","Bones"].includes(a)){
+//         a = "Skin Diseases"
+//     }
+
+//     if (a.includes("Brain")){
+//         a = "Brain Tumor"
+//     }
+
+//     const response = await generateResponse(`Why does the following disease occur ${a}`);
+
+//     message = document.createElement('div');
+//     message.classList.add("chatbot-message","chatbot");
+//     message.innerHTML = `<p class="chatbot-text" sentTime="${currentTime}">${response}</p>`;
+//     conversation.appendChild(message);
+//     message.scrollIntoView({behavior: "smooth"});
+//     };
+
+window.onload = (event) =>{
+    window.print()
+}
+
+inputForm.addEventListener("submit", async function(event) {
+  event.preventDefault();
+
+  const input = inputField.value;
+
+  inputField.value = "";
+  const currentTime = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+  let message = document.createElement("div");
+  message.classList.add("chatbot-message", "user-message");
+  message.innerHTML = `<p class="chatbot-text" sentTime="${currentTime}">${input}</p>`;
+  conversation.appendChild(message);
+
+  const response = await generateResponse(input);
+
+  message = document.createElement('div');
+  message.classList.add("chatbot-message","chatbot");
+  message.innerHTML = `<p class="chatbot-text" sentTime="${currentTime}">${response}</p>`;
+  conversation.appendChild(message);
+  message.scrollIntoView({behavior: "smooth"});
+});
+
+
+async function generateResponse(message) {
+            try {
+                const response = await fetch('/chat/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({ message: message })
+                });
+
+                const data = await response.json();
+                return data.response;
+            } catch (error) {
+                console.log(error);
+                return 'Sorry - Something went wrong. Please try again!';
+            }
+        }
+
+</script>
 </html>

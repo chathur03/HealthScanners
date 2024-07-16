@@ -1,0 +1,110 @@
+####FRONTEND
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Report</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #121212;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            display: flex;
+            width: 80%;
+            height: 70%;
+            border: 1px solid #555;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .left {
+            flex: 1033 0 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #1e1e1e;
+            padding: 20px;
+        }
+        .left img {
+            width: 80%;
+            height: auto;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .left h2 {
+            font-size: 24px;
+        }
+        .right {
+            flex: 503 0 0;
+            background-color: #2e2e2e;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .right h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .right .report-box {
+            width: 80%;
+            height: 200px;
+            background-color: #3e3e3e;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left">
+            <img src="your-image-url.jpg" alt="Medical Image">
+            <h2>Disease Detected: Pneumonia</h2>
+        </div>
+        <div class="right">
+            <h2>Gemini Report</h2>
+            <div class="report-box" id="reportBox">
+                <!-- Report content will be displayed here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const reportBox = document.getElementById('reportBox');
+
+            fetch('http://127.0.0.1:8000/api/generate/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: 'Provide a detailed analysis of the detected disease.' })
+            })
+            .then(response => response.json())
+            .then(data => {
+                reportBox.textContent = data.response;
+            })
+            .catch(error => {
+                reportBox.textContent = 'Sorry, something went wrong. Please try again.';
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
