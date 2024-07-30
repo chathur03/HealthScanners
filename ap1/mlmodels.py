@@ -16,6 +16,12 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
+lungmodel = tf.keras.models.load_model("static/models/lung_disease_predictor.h5")
+genmodel = load_model("static/models/general_classifier.h5", compile=False)
+skinmodel = load_model("static/models/skin_disease.h5", compile=False)
+bonemodel = YOLO("static/models/best.pt")
+
+
 # def predict_skinD(image_path):
 #     model = tf.keras.models.load_model("static/models/skin_disease.h5")
 #     arr = ['BA- cellulitis','BA-impetigo','FU-athlete-foot','FU-nail-fungus','FU-ringworm','PA-cutaneous-larva-migrans','VI-chickenpox','VI-shingles']
@@ -31,7 +37,7 @@ import torch.nn.functional as F
 #     return pred
 
 def predict_lungD(image_path):
-    model = tf.keras.models.load_model("static/models/lung_disease_predictor.h5")
+    model = lungmodel
     arr = ["Covid-19","Normal Lung","Pnuemonia","Tuberculosis"]
     img = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
     img = np.expand_dims(img, axis=-1)
@@ -46,18 +52,15 @@ def predict_lungD(image_path):
     return pred
 
 def predict_bone(image_path):
-    model = YOLO("static/models/best.pt")
-    results = model(image_path)
+    results = bonemodel(image_path)
     results[0].save("static/pred/predicted.png")
 
-
-
-    return ">"
+    return ""
 
 
 def general_predict(image_path):
     np.set_printoptions(suppress=True)
-    model = load_model("static/models/general_classifier.h5", compile=False)
+    model = genmodel
     class_names = open("static/labels.txt", "r").readlines()
     data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
     image = Image.open(image_path).convert("RGB")
@@ -78,7 +81,7 @@ def general_predict(image_path):
 
 def predict_skinD(image_path):
     np.set_printoptions(suppress=True)
-    model = load_model("static/models/skin_disease.h5", compile=False)
+    model = skinmodel
     class_names = open("static/skin_labels.txt", "r").readlines()
     data = np.ndarray(shape=(1, 224, 224, 3), dtype=np.float32)
     image = Image.open(image_path).convert("RGB")
